@@ -6,12 +6,12 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.Assert;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+
+import java.util.List;
 
 public class stepDefinition {
 
@@ -107,5 +107,23 @@ public class stepDefinition {
         String successTransact = driver.findElement(By.xpath("//span[contains(text(),'"+confirmation+"')]")).getText();
         Assert.assertEquals(confirmation, successTransact);
     }
+
+    @And("^delete the customer '(.*)' information$")
+    public void validateRowToBeDeleted(String valueToDelete) {
+        List<WebElement> links = driver.findElements(By.cssSelector("tbody td:nth-child(1)"));
+        for (WebElement link : links) {
+            WebElement cell = link.findElement(By.cssSelector("tbody td:nth-child(1)"));
+            String textA = cell.getText();
+
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView()", link);
+
+            if (textA.equals(valueToDelete)) {
+                WebElement deleteLink = link.findElement(By.cssSelector("tbody td:nth-child(5) button"));
+                deleteLink.click();
+                break; // Assuming only one row should match, so we break after clicking delete link
+            }
+        }
+    }
+
 
 }

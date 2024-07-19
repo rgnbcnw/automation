@@ -31,6 +31,6 @@ Feature: XYZ Bank Transaction Testing
     When click on 'Home' button
     When click on main menu 'Bank Manager Login'
     When click on 'Customers' in Menu tab
-    And click on delete button
+    And delete the customer 'Test' information
     When click on 'Home' button
 
