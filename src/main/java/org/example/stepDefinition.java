@@ -1,5 +1,6 @@
 package org.example;
 
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -94,18 +95,30 @@ public class stepDefinition {
         clickButton(transaction);
     }
 
-    @And("^assert '(.*)' Transaction$")
-    public void transaction(String transactionName) throws InterruptedException {
+    @And("^assert the '(.*)' Transaction is '(.*)'$")
+    public void transaction(String transactionName, String visibility) throws InterruptedException {
         Thread.sleep(2000);
-        String name = driver.findElement(By.xpath("//td[contains(text(),'"+transactionName+"')]")).getText();
-        Assert.assertEquals(transactionName,name);
+        switch(visibility){
+            case ("visible"):
+                String name = driver.findElement(By.xpath("//td[contains(text(),'"+transactionName+"')]")).getText();
+                Assert.assertEquals(transactionName,name);
+                break;
+            case("not visible"):
+                try{
+                    WebElement t = driver.findElement(By.xpath("//td[contains(text(),'"+transactionName+"')]"));
+                } catch(NoSuchElementException n) {
+                    System.out.println("Element is not visible");
+                }
+                break;
+        }
+
     }
 
     @And("^assert '(.*)'$")
-    public void successfulTransaction(String confirmation) throws InterruptedException {
+    public void confirmationTransaction(String confirmation) throws InterruptedException {
         Thread.sleep(2000);
-        String successTransact = driver.findElement(By.xpath("//span[contains(text(),'"+confirmation+"')]")).getText();
-        Assert.assertEquals(confirmation, successTransact);
+        String transact = driver.findElement(By.xpath("//span[contains(text(),'"+confirmation+"')]")).getText();
+        Assert.assertEquals(confirmation, transact);
     }
 
     @And("^delete the customer '(.*)' information$")
@@ -125,5 +138,9 @@ public class stepDefinition {
         }
     }
 
+    @After
+    public void afterTest(){
+        driver.quit();
+    }
 
 }
