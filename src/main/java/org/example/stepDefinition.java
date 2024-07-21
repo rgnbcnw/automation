@@ -9,11 +9,17 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 import java.util.List;
+import java.util.function.Function;
 
 public class stepDefinition {
 
     public WebDriver driver;
+    public WebDriverWait wait;
 
     @Given("^open url '(.*)'$")
     public void openUrl(String url){
@@ -21,21 +27,18 @@ public class stepDefinition {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.get(url);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(100));
     }
 
     @When("^delete the '(.*)' task$")
     public void validateRowToBeDeleted(String valueToDelete) throws InterruptedException {
         Thread.sleep(2000);
-        List<WebElement> links = driver.findElements(By.xpath("//li[@class=\"collection_item\"]"));
-        for (WebElement link : links) {
-            WebElement cell = link.findElement(By.xpath("//li[@class=\"collection_item\"]"));
-            String textA = cell.getText();
-
-            if (textA.equals(valueToDelete)) {
-                WebElement deleteLink = link.findElement(By.xpath("(//li[@class=\"collection_item\"]/button)[1]"));
-                deleteLink.click();
-                break; // Assuming only one row should match, so we break after clicking delete link
-            }
+        List<WebElement> deleteButton = driver.findElements(By.xpath("//li[@class=\"collection_item\"]"));
+        String elementText;
+        for(WebElement button : deleteButton){
+            WebElement deleteLink = driver.findElement(By.xpath("//li[@class=\"collection_item\"]/button"));
+            deleteLink.click();
+            Thread.sleep(2000);
         }
     }
 
@@ -52,6 +55,6 @@ public class stepDefinition {
         Assert.assertEquals("Your schedule is full!", error);
         System.out.println("ur schedule is full");
         Thread.sleep(2000);
-        driver.quit();
+//        driver.quit();
     }
 }
